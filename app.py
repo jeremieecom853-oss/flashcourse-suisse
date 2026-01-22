@@ -27,37 +27,43 @@ else:
 
 # --- FONCTIONS UTILES ---
 def generate_course(topic):
+    # Utilisation du nom de modèle standard
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
-    Crée un cours complet et pédagogique sur le sujet suivant : "{topic}".
-    Le cours doit être divisé en 5 jours distincts.
-    Pour chaque jour, fournis :
-    1. Une leçon détaillée (environ 300 mots).
-    2. Un quiz de 3 questions à choix multiples (QCM).
+    Tu es un expert en éducation et en droit civique suisse. 
+    Crée un programme de révision intensif sur le sujet : "{topic}".
+    
+    CONSIGNES SPÉCIFIQUES :
+    1. Si le sujet concerne la Suisse ou la naturalisation, base-toi sur la Constitution Fédérale et les spécificités des cantons.
+    2. Le ton doit être encourageant pour un étudiant.
+    3. Divise le cours en 5 jours de progression logique.
     
     Format de réponse attendu (JSON uniquement) :
     {{
       "Jour 1": {{
-        "titre": "Titre du jour 1",
-        "lecon": "Contenu de la leçon...",
+        "titre": "Titre",
+        "lecon": "Contenu pédagogique structuré...",
         "quiz": [
-          {{"question": "Question 1", "options": ["A", "B", "C", "D"], "reponse": "A"}},
-          ...
+          {{"question": "Q1", "options": ["A", "B", "C", "D"], "reponse": "A"}},
+          {{"question": "Q2", "options": ["A", "B", "C", "D"], "reponse": "B"}},
+          {{"question": "Q3", "options": ["A", "B", "C", "D"], "reponse": "C"}}
         ]
       }},
       ... jusqu'au Jour 5
     }}
-    Réponds uniquement avec le JSON.
+    Réponds EXCLUSIVEMENT avec le code JSON brut.
     """
     
     try:
         response = model.generate_content(prompt)
-        # Nettoyage de la réponse pour extraire le JSON au cas où Gemini ajoute du texte Markdown
-        json_str = re.search(r'\{.*\}', response.text, re.DOTALL).group()
-        return json.loads(json_str)
+        # Nettoyage pour s'assurer qu'on n'a que le JSON
+        json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group())
+        return None
     except Exception as e:
-        st.error(f"Erreur lors de la génération : {e}")
+        st.error(f"Erreur technique : {e}")
         return None
 
 # --- GESTION DE L'ÉTAT (SESSION STATE) ---
