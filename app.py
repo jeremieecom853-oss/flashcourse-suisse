@@ -27,7 +27,7 @@ else:
 
 # --- FONCTIONS UTILES ---
 def generate_course(topic):
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
     Crée un cours complet et pédagogique sur le sujet suivant : "{topic}".
