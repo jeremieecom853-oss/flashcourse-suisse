@@ -18,12 +18,12 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- INITIALISATION DE L'API GEMINI ---
-# Remplacez par st.secrets["GEMINI_API_KEY"] pour le déploiement
-api_key = st.sidebar.text_input("Clé API Gemini", type="password")
-if api_key:
+# Remplacez la partie "INITIALISATION DE L'API GEMINI" par ceci :
+if "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
 else:
-    st.warning("Veuillez entrer votre clé API Gemini dans la barre latérale pour commencer.")
+    st.error("Configuration manquante : La clé API n'est pas configurée dans les secrets.")
 
 # --- FONCTIONS UTILES ---
 def generate_course(topic):
